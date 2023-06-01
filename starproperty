@@ -1,0 +1,4 @@
+property set starproperty is
+	RoleTypes: type enumeration (User, UserManager,Admin);
+	Role: starproperty::RoleTypes applies to (system, thread);
+end starproperty;
