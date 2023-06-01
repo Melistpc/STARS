@@ -1,0 +1,46 @@
+package useradmin
+public
+	with starproperty;
+
+system User
+	features
+		send_req: out data port;
+		get_reply: in data port;
+	properties
+		starproperty::Role => User;	
+end User;
+
+system Admin
+	features
+		get_req: in data port;
+		send_reply: out data port;
+	properties
+		starproperty::Role => Admin;	
+end Admin;
+system UserManager
+	features
+		get_req: in data port;
+		send_reply: out data port;
+	properties
+		starproperty::Role => UserManager;	
+end UserManager;
+
+
+system user_admin
+end user_admin;
+
+
+system implementation user_admin.Impl
+	subcomponents
+		User: system User;
+		Admin: system Admin;
+		UserManager: system UserManager;
+	connections
+		conn1: port User.send_req -> UserManager.get_req;
+		conn2: port UserManager.send_reply -> User.get_reply;
+		conn3:port UserManager.send_reply-> Admin.get_req;
+		conn4:port Admin.send_reply -> User.get_reply;
+end user_admin.Impl;
+	
+end useradmin;
+
