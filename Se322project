@@ -1,0 +1,97 @@
+package se322project
+
+public
+	
+
+	system application
+		features
+			get_req: in data port;
+			send_reply: out data port;
+			send_hb: out data port;
+	end application;
+	
+	system App
+		features
+			get_req: in data port;
+			send_reply: out data port;
+	end App;
+	system implementation application.Impl
+		subcomponents
+			App: system app;
+		connections
+			conn1: port get_req -> App.get_req;
+			conn2: port App.send_reply -> send_reply; 	
+	end application.Impl;
+	
+	system webserver 
+		features
+			get_req: in data port;
+			send_reply: out data port;
+			send_hb: out data port;
+			send_systemdata: out data port;
+	end webserver;
+	
+	system webapp
+		features
+			get_req: in data port;
+			send_reply: out data port;
+	end webapp;
+	
+	system implementation webserver.Impl
+		subcomponents
+			wapp: system webapp;
+		connections
+			conn1: port get_req -> wapp.get_req;
+			conn2: port wapp.send_reply -> send_reply; 	
+	end webserver.Impl;
+		
+	
+	system heartbeatserver
+		features
+			get_hb: in data port;
+			collect_systemdata: in data port;	
+	end heartbeatserver;
+	
+	system hbcomponent
+		features
+			get_hb: in data port;
+	end hbcomponent;
+	
+	system predictioncomp
+		features 
+			get_systemdata:in data port;
+	end predictioncomp;
+	
+	system implementation heartbeatserver.Impl
+		subcomponents
+			hbcomp: system hbcomponent;
+			pcomp: system predictioncomp;
+		connections
+			conn1: port get_hb -> hbcomp.get_hb; 
+			conn2: port collect_systemdata -> pcomp.get_systemdata;	
+	end heartbeatserver.Impl;
+	
+	system myproject
+		features
+			get_req: in data port;
+			send_reply: out data port;
+	end myproject;
+		system implementation myproject.Impl
+		subcomponents
+			WS: system webserver.Impl;
+			HBS: system heartbeatserver.Impl;		
+		connections
+			conn1: port WS.send_hb -> HBS.get_hb;
+			conn2: port get_req -> WS.get_req;
+			conn3: port WS.send_reply -> send_reply; 
+			conn4: port WS.send_systemdata -> HBS.collect_systemdata;		
+			
+	end myproject.Impl;
+	
+
+
+	
+		
+
+	
+end se322project;
